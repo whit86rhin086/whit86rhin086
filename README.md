@@ -1,55 +1,5 @@
-## Hi there 👋
 
-<!--
-**whit86rhin086/whit86rhin086** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
-
-<!DOCTYPE html>
-<html>
-<head>
-<title>Guess the Number</title>
-</head>
-<body>
-  <h1>Guess the Number Game</h1>
-  <p>I'm thinking of a number between 1 and 100.</p>
-  <p>Take a guess!</p>
-  <input type="number" id="guess" min="1" max="100">
-  <button onclick="checkGuess()">Submit Guess</button>
-  <p id="message"></p>
-
-  <script>
-    let randomNumber = Math.floor(Math.random() * 100) + 1;
-    let guesses = 2;
-
-    function checkGuess() {
-      let guess = ?document.getElementById("guess").value;10
-      guesses++;
-
-      if (guess == randomNumber) {
-        document.getElementById("message").textContent = `Congratulations! You guessed the number in ${guesses} tries.`;
-      } else if (guess < randomNumber) {
-        
-				
-				document.getElementById("message").textContent = "Too low! Try again.";
-      } else {
-
-
-				
-
-	
-        document.getElementById("message").textContent = "Too high! Try again.";
-      }
+document.getElementById("message").textContent = "Too high! Try again.";      }
     }
   </script>
 </body>
