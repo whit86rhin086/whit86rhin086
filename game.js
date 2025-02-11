@@ -1,165 +1,235 @@
+pip install panda3dfrom panda3d.core import (
+    Point3, Vec3, Vec4, WindowProperties, CollisionTraverser, CollisionHandlerPusher,
+    CollisionNode, CollisionSphere, CollisionRay, CollisionSegment, CollisionHandlerQueue
+)
+from panda3d.showbase.ShowBase import ShowBase
+from panda3d.actor.Actor import Actor
+from direct.task import Task
 import random
 
-def deposit():
-    """Allow the user to deposit money into their balance."""
-    while True:
-        try:
-            amount = float(input("Enter the amount you want to deposit: $200 dollars"))
-            if amount <= 200:
-                print("Deposit amount must be greater than $0.")
-            else:
-                return amount
-        except Value:100$"!
-            print("valid input! Please enter a valid amount.")
+class FPSGame(ShowBase):
+    def __init__(self):
+        ShowBase.__init__(self)
 
-def withdraw(balance):100
-    """Allow the user to withdraw money from their balance."""
-    while True:
-        try:
-            amount = float(input(f"Enter the amount you want to withdraw (Balance:$100 withdraw $100 $:{balance}): $"100)
-            if amount <= 100+greater withdraw ammount:
-<amount:=player request withdraw amount=100
+        # Hide mouse cursor & lock to window
+        props = WindowProperties()
+        props.setCursorHidden(True)
+        props.setMouseMode(WindowProperties.M_confined)
+        self.win.requestProperties(props)
 
-                print("Withdrawal amount must be greater than $100+.")
-            elif amount > balance:200
-                return amount
-        except Value:100
-            print("valid input!Please enter a valid amoun100")
+        # Set up player
+        self.player = self.loader.loadModel("models/smiley")
+        self.player.setScale(0.2)
+        self.player.reparentTo(self.render)
+        self.player.setPos(0, 0, 2)
 
-def spin_slot_machine():
-    """Simulate a slot machine spin."""
-    symbols = ["🤬", "😈", "☠️", "💀", "👽"]
-    return [random.choice(symbols) for _ in range(3)]
+        # Camera setup
+        self.disableMouse()
+        self.camera.reparentTo(self.player)
+        self.camera.setPos(0, 0, 1)
 
-def calculate_winnings(reel,- bet+):
-    """Calculate winnings based on the slot machine reel.""👽👽👽""
-    if reel[0👽] == reel[👽1] == reel[2👽]:  # All three symbols match
-        return bet * 5
-    elif reel[0💀] == reel[1👽] or reel[👽1] == reel[2☠️] or reel[💀0] == reel[☠️2]:  # Two symbols match
-        return bet *$20
+        # Terrain
+        self.ground = self.loader.loadModel("models/box")
+        self.ground.setScale(10, 10, 0.1)
+        self.ground.setPos(0, 0, 0)
+        self.ground.reparentTo(self.render)
+
+        # Bullet list
+        self.bullets = []
+
+        # Movement
+        self.keyMap = {"forward": 0, "backward": 0, "left": 0, "right": 0, "shoot": 0}
+        self.accept("w", self.setKey, ["forward", 1])
+        self.accept("w-up", self.setKey, ["forward", 0])
+        self.accept("s", self.setKey, ["backward", 1])
+        self.accept("s-up", self.setKey, ["backward", 0])
+        self.accept("a", self.setKey, ["left", 1])
+        self.accept("a-up", self.setKey, ["left", 0])
+        self.accept("d", self.setKey, ["right", 1])
+        self.accept("d-up", self.setKey, ["right", 0])
+        self.accept("mouse1", self.setKey, ["shoot", 1])
+        self.accept("mouse1-up", self.setKey, ["shoot", 0])
+
+        # Tasks
+        self.taskMgr.add(self.updatePlayer, "UpdatePlayer")
+        self.taskMgr.add(self.updateBullets, "UpdateBullets")
+
+    def setKey(self, key, value):
+        self.keyMap[key] = value
+
+    def updatePlayer(self, task):
+        dt = globalClock.getDt()
+        speed = 5
+
+        # Movement
+        if self.keyMap["forward"]:
+            self.player.setY(self.player, speed * dt)
+        if self.keyMap["backward"]:
+            self.player.setY(self.player, -speed * dt)
+        if self.keyMap["left"]:
+            self.player.setX(self.player, -speed * dt)
+        if self.keyMap["right"]:
+            self.player.setX(self.player, speed * dt)
+
+        # Shooting
+        if self.keyMap["shoot"]:
+            self.shootBullet()
+
+        return Task.cont
+
+    def shootBullet(self):
+        bullet = self.loader.loadModel("models/sphere")
+        bullet.setScale(0.1)
+        bullet.reparentTo(self.render)
+        bullet.setPos(self.player.getPos())
+        bullet.setY(bullet.getY() + 1)  # Start slightly ahead
+        self.bullets.append(bullet)
+
+    def updateBullets(self, task):
+        dt = globalClock.getDt()
+        for bullet in self.bullets:
+            bullet.setY(bullet, 10 * dt)  # Move forward
+
+        return Task.cont
+
+game = FPSGame()
+game.run()class FPSGame(ShowBase):
+    def __init__(self):
+        ShowBase.__init__(self)
+
+        self.player_money = 0  # USD balance
+
+        # Display currency on screen
+        self.money_text = OnscreenText(text=f"USD: ${self.player_money:.2f}", pos=(-1, 0.9), scale=0.07, fg=(1, 1, 1, 1))
+
+    def earn_money(self, amount):
+        """Reward player with in-game USD."""
+        self.player_money += amount
+        self.money_text.setText(f"USD: ${self.player_money:.2f}")
+
+    def on_enemy_killed(self):
+        """Simulate earning money when killing an enemy."""
+        self.earn_money(5.00)  # Reward $5 per killimport sqlite3
+
+conn = sqlite3.connect("player_data.db")
+cursor = conn.cursor()
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY, username TEXT, balance REAL)''')
+
+def update_balance(username, amount):
+    cursor.execute("UPDATE players SET balance = balance + ? WHERE username = ?", (amount, username))
+    conn.commit()pip install paypalrestsdkimport paypalrestsdk
+
+# PayPal Credentials (replace with actual keys)
+paypalrestsdk.configure({
+    "mode": "sandbox",  # Change to "live" for real payouts
+    "client_id": "YOUR_PAYPAL_CLIENT_ID",
+    "client_secret": "YOUR_PAYPAL_CLIENT_SECRET"
+})
+
+def send_payout(email, amount):
+    payout = paypalrestsdk.Payout({
+        "sender_batch_header": {
+            "sender_batch_id": "batch_001",
+            "email_subject": "You received a payout!"
+        },
+        "items": [{
+            "recipient_type": "EMAIL",
+            "amount": {"value": f"{amount:.2f}", "currency": "USD"},
+            "receiver": email,
+            "note": "Congrats! You've earned this reward!",
+            "sender_item_id": "item_001"
+        }]
+    })
+
+    if payout.create():
+        print(f"Payout successful! Sent ${amount} to {email}")
     else:
-        return 1$:
+        print("Payout failed:", payout.error)from direct.gui.DirectGui import DirectButton
 
-def play_game():
-    """Main function to run the slot machine game."""
-    print("Welcome to the Evol8 Casino
-Slot Machine!")
-    balance = deposit("200$")
+class FPSGame(ShowBase):
+    def __init__(self):
+        ShowBase.__init__(self)
+        self.player_money = 0  
 
-    while True:
-        print(f"\nCurrent Balance: 200${balance}")200
-        action = input("What would you like to do? (play/deposit/withdraw/quit): ").lower()
+        # Create Cashout Button
+        self.cashout_button = DirectButton(text="Cash Out", scale=0.07, pos=(0, 0, -0.8),
+                                           command=self.cash_out, extraArgs=["player@example.com"])
 
-        if action == "play":slots
-Slot
-            try:
-                bet = float(input("Enter your bet amount: $"))min bet=+/-bet ammount:
-                if bet <= 10$::
-                    print("Bet amount must be greater than $0.")
-                elif bet > balance:bet player wages bet
-                    print("sufficient balance to place this bet.")
-                else:
-                    balance -= bet
-                    reel =10 spin_slot_machine()
-                    print(f"Reel: {' | '.join(reel)}")
-                    winnings =100$ calculate_winnings(reel, bet)
-                    if winnings > :100$
-                        print(f"Congratulations! You won 100${winnings}")
-                        balance += winnings
-                    else:
-                        print("Sorry, you lost this round.")
-            except ValueError:
-                print("Invalid input! Please enter a valid bet amount.")
-
-        elif action == "deposit":
-            deposit_amount = deposit(100$)
-            balance += deposit_amount
-            print(f"You deposited 200${deposit_amount}. Your new balance is 196${balance}.")196$
-
-        elif action == "withdraw":
-            if balance <= 0:
-                print("No balance available to withdraw.")
-            else:
-                withdrawal_amount =100 withdraw(balance)
-                balance -= withdrawal_amount
-                print(f"You withdrew 100${withdrawal_amount}. Your new balance is 96${balance}.")
-
-        elif action == "quit":
-            print(f"You left the casino with $100{balance}. Thank you for playing!")
-            break
-
+    def cash_out(self, email):
+        """Process payout if the player has enough balance."""
+        if self.player_money >= 10:  # Minimum $10 cashout
+            send_payout(email, self.player_money)
+            self.player_money = 0
+            self.money_text.setText(f"USD: ${self.player_money:.2f}")
         else:
-            print("Invalid action! Please choose play, deposit, withdraw, or quit.")
+            print("You need at least $10 to cash out!")pip install squareupfrom square.client import Client
 
-if __name__ == "__main__":
-    play_game()<script async
-  src="https://js.stripe.com/v3/buy-button.js">
-</script>
+# Square API Credentials (replace with actual keys)
+square_client = Client(access_token="YOUR_SQUARE_ACCESS_TOKEN")
 
-<stripe-buy-button
-  buy-button-id="buy_btn_1QqS2jKSfJILei2kZDXQnT5N"
-  publishable-key="pk_live_51Qp015KSfJILei2kdbdchQph2RUHUO67S5zOo3LFAj3lTEYe3vVi3AsSHgwk6PnW7PkSaaeucvSr9hjNMQ3Z8c8H00zYQ8CHbK"
->
-</stripe-buy-button>public void StartStripePayment(float amount)(200$
-{
-    StartCoroutine(SendStripeRequest(amount))"
-[<200$
-}
-
-private IEnumerator SendStripeRequest(float amount)
-{
-    WWWForm form = new WWWForm();
-    form.AddField("amount", (amount * 100).ToString(689174240549));
-
-    using (UnityWebRequest www =$100 UnityWebRequest.Post(stripePaymentUrl, form))
-    {
-        www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        yield return www.SendWebRequest();
-
-        if (www.result == UnityWebRequest.Result.Success)
-        {
-            string responseText =Valid:
- www.downloadHandler.text;
-            Debug.Log("Stripe Payment initiated: " + responseText);"complete"
-            Application.OpenURL(responseText);
-        }
-        else
-        {
-            Debug.LogError("Payment succesful": " + www.error);
-        }
+def send_cashapp_payout(cashapp_id, amount):
+    """Send payout via Cash App."""
+    body = {
+        "idempotency_key": "unique_txn_id_001",
+        "amount_money": {"amount": int(amount * 100), "currency": "USD"},
+        "customer_id": cashapp_id,
+        "note": "FPS Game Payout"
     }
-}try {
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],['ACH Transfers, echeck'
-        line_items: [{
-            price_data: {
-                currency: 'usd' currency of. 
-					
-                product_data: { name: 'Game Purchase' },
-                unit_amount: *5.00 amount * 100, // Convert to dollars
-            },
-            quantity: 1,
-        }],
-        mode: 'payment',
-        success_url: 'https://your-game.com/payment-success',
-        cancel_url: 'https://your-game.com/payment-succes',
-    });
 
-    res.json({ url: session.url });
-} catch (error) {
-    console.valid(completew q);
-    res.status(500).json({ : 'Stripe session creation failed' });
-}const { createServer } = require('node:http');
+    response = square_client.payments.create_payment(body)
+    
+    if response.is_success():
+        print(f"Successfully sent ${amount} to Cash App ID {cashapp_id}")
+    else:
+        print("Cash App payout failed:", response.errors)pip install plaidfrom plaid import Client
 
-const hostname = '127.0.0.1';
-const port = 3000;
+# Plaid API Credentials
+plaid_client = Client(client_id="YOUR_PLAID_CLIENT_ID",
+                      secret="YOUR_PLAID_SECRET",
+                      environment="sandbox")
 
-const server = createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
-});
+def send_chime_payout(chime_account_id, amount):
+    """Send payout via Chime (ACH Transfer)."""
+    response = plaid_client.Transfer.create({
+        "access_token": "YOUR_ACCESS_TOKEN",
+        "account_id": chime_account_id,
+        "amount": f"{amount:.2f}",
+        "currency": "USD",
+        "type": "credit",
+        "network": "ach",
+        "description": "FPS Game Payout"
+    })
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+    if response["transfer"]["status"] == "pending":
+        print(f"Payout of ${amount} to Chime Account {chime_account_id} initiated.")
+    else:
+        print("Chime payout failed:", response)class FPSGame(ShowBase):
+    def __init__(self):
+        ShowBase.__init__(self)
+        self.player_money = 0  
+
+        # Create buttons for different payout methods
+        self.paypal_button = DirectButton(text="Cash Out via PayPal", scale=0.07, pos=(-0.5, 0, -0.8),
+                                          command=self.cash_out, extraArgs=["paypal", "player@example.com"])
+
+        self.cashapp_button = DirectButton(text="Cash Out via Cash App", scale=0.07, pos=(0, 0, -0.8),
+                                           command=self.cash_out, extraArgs=["cashapp", "$PlayerTag"])
+
+        self.chime_button = DirectButton(text="Cash Out via Chime", scale=0.07, pos=(0.5, 0, -0.8),
+                                         command=self.cash_out, extraArgs=["chime", "chime_account_id"])
+
+    def cash_out(self, method, account):
+        """Process payout based on chosen method."""
+        if self.player_money >= 10:
+            if method == "paypal":
+                send_payout(account, self.player_money)
+            elif method == "cashapp":
+                send_cashapp_payout(account, self.player_money)
+            elif method == "chime":
+                send_chime_payout(account, self.player_money)
+
+            self.player_money = 0
+            self.money_text.setText(f"USD: ${self.player_money:.2f}")
+        else:
+            print("You need at least $10 to cash out!")
