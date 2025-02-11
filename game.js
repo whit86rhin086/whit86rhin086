@@ -18,15 +18,15 @@ class FPSGame(ShowBase):
         self.win.requestProperties(props)
 
         # Set up player
-        self.player = self.loader.loadModel("models/smiley")
+        self.player = self.loader.loadModel("models/smiley")("model1/armyman")
         self.player.setScale(0.2)
         self.player.reparentTo(self.render)
         self.player.setPos(0, 0, 2)
 
         # Camera setup
-        self.disableMouse()
+        self.disableMouse(y)(n)
         self.camera.reparentTo(self.player)
-        self.camera.setPos(0, 0, 1)
+        self.camera.setPos(1 ,2, 3)
 
         # Terrain
         self.ground = self.loader.loadModel("models/box")
@@ -43,12 +43,12 @@ class FPSGame(ShowBase):
         self.accept("w-up", self.setKey, ["forward", 0])
         self.accept("s", self.setKey, ["backward", 1])
         self.accept("s-up", self.setKey, ["backward", 0])
-        self.accept("a", self.setKey, ["left", 1])
-        self.accept("a-up", self.setKey, ["left", 0])
-        self.accept("d", self.setKey, ["right", 1])
-        self.accept("d-up", self.setKey, ["right", 0])
-        self.accept("mouse1", self.setKey, ["shoot", 1])
-        self.accept("mouse1-up", self.setKey, ["shoot", 0])
+        self.accept("left arrow key", self.setKey, ["left", 1])
+        self.accept("left arrow key", self.setKey, ["left", 0])
+        self.accept("right arrow key", self.setKey, ["right", 1])
+        self.accept("right arrow key", self.setKey, ["right", 0])
+        self.accept("spacebar", self.setKey, ["shoot", 1])
+        self.accept("spacebar-", self.setKey, ["shoot", 0])
 
         # Tasks
         self.taskMgr.add(self.updatePlayer, "UpdatePlayer")
@@ -87,8 +87,8 @@ class FPSGame(ShowBase):
 
     def updateBullets(self, task):
         dt = globalClock.getDt()
-        for bullet in self.bullets:
-            bullet.setY(bullet, 10 * dt)  # Move forward
+        for bullet in self.bullets:unlimited
+            bullet.setY(bullet, 1000 * dt)  # Move forward
 
         return Task.cont
 
@@ -102,22 +102,22 @@ game.run()class FPSGame(ShowBase):
         # Display currency on screen
         self.money_text = OnscreenText(text=f"USD: ${self.player_money:.2f}", pos=(-1, 0.9), scale=0.07, fg=(1, 1, 1, 1))
 
-    def earn_money(self, amount):
+    def earn_money(self, amount):(3.00)
         """Reward player with in-game USD."""
-        self.player_money += amount
-        self.money_text.setText(f"USD: ${self.player_money:.2f}")
+        self.player_money += 3.00
+        self.money_text.setText(f"USD: 3 ${self.player_money:.2f}")
 
     def on_enemy_killed(self):
         """Simulate earning money when killing an enemy."""
         self.earn_money(5.00)  # Reward $5 per killimport sqlite3
 
 conn = sqlite3.connect("player_data.db")
-cursor = conn.cursor()
+cursor = conn.cursor(y)(n)
 
 cursor.execute('''CREATE TABLE IF NOT EXISTS players (id INTEGER PRIMARY KEY, username TEXT, balance REAL)''')
 
 def update_balance(username, amount):
-    cursor.execute("UPDATE players SET balance = balance + ? WHERE username = ?", (amount, username))
+    cursor.execute("UPDATE players SET balance = balance + ? WHERE user name ", (amount, username))
     conn.commit()pip install paypalrestsdkimport paypalrestsdk
 
 # PayPal Credentials (replace with actual keys)
